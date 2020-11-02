@@ -11,7 +11,6 @@ function EthersTab() {
 
   // check if ethereum is injected
   useEffect(() => {
-    console.log('Call detect web3')
     if (typeof window.ethereum !== 'undefined') {
       setIsEtherem(true)
     } else setIsEtherem(false)
@@ -20,7 +19,6 @@ function EthersTab() {
   // connect metamask to app
   useEffect(() => {
     ;(async () => {
-      console.log('Call enable')
       try {
         const accounts = await window.ethereum.request({
           method: 'eth_requestAccounts',
@@ -35,7 +33,6 @@ function EthersTab() {
   }, [isEtherem])
 
   useEffect(() => {
-    console.log('call1')
     ;(async () => {
       const provider = new ethers.providers.Web3Provider(window.ethereum)
       const network = await provider.getNetwork()
