@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useReducer } from "react";
 import axios from "axios";
 import {
   Heading,
+  Text,
   FormControl,
   Input,
   HStack,
@@ -13,66 +14,100 @@ import {
   Spinner,
 } from "@chakra-ui/core";
 
-function FetchTab() {
-  const [data, setData] = useState({ hits: [] });
-  const [query, setQuery] = useState("redux");
-  const [url, setUrl] = useState(
-    "https://hn.algolia.com/api/v1/search?query=redux"
-  );
-  const [isLoading, setIsLoading] = useState(false);
-  const [isError, setIsError] = useState(false);
+const fetchReducer = (state, action) => {
+  switch (action.type) {
+    case "FETCH_INIT":
+      return { ...state, isLoading: true, isError: false };
+    case "FETCH_SUCCESS":
+      return {
+        ...state,
+        isLoading: false,
+        data: action.payload,
+      };
+    case "FETCH_FAILURE":
+      return { ...state, isLoading: false, isError: true };
+    case "SET_QUERY":
+      return { ...state, query: action.payload };
+    case "SET_URL":
+      return { ...state, url: action.payload };
+    default:
+      throw new Error(`Unhandled action ${action.type} in fetchReducer`);
+  }
+};
 
+const initialState = {
+  data: { hits: [] },
+  query: "redux",
+  url: "https://hn.algolia.com/api/v1/search?query=redux",
+  isLoading: false,
+  isError: false,
+};
+
+function FetchTab() {
+  const [state, dispatch] = useReducer(fetchReducer, initialState);
   useEffect(() => {
     const fetchData = async () => {
-      setIsError(false);
-      setIsLoading(true);
-
+      dispatch({ type: "FETCH_INIT" });
       try {
-        const result = await axios(url);
-
-        setData(result.data);
+        const result = await axios(state.url);
+        dispatch({ type: "FETCH_SUCCESS", payload: result.data });
       } catch (error) {
-        setIsError(true);
+        dispatch({ type: "FETCH_FAILURE" });
       }
-
-      setIsLoading(false);
     };
-
     fetchData();
-  }, [url]);
+  }, [state.url]);
 
   return (
     <VStack>
-      <Heading mb={10}>Fetch content with useEffect hook</Heading>
+      <Heading mb={5}>
+        Fetch content with <Text as="i">useEffect</Text> hook
+      </Heading>
+      <Heading as="h3" mb={10}>
+        and manage state with <Text as="i">useReducer</Text> hook
+      </Heading>
       <form
         onSubmit={(event) => {
-          setUrl(`http://hn.algolia.com/api/v1/search?query=${query}`);
           event.preventDefault();
+          dispatch({
+            type: "SET_URL",
+            payload: `http://hn.algolia.com/api/v1/search?query=${state.query}`,
+          });
         }}
       >
         <FormControl id="search-term" isRequired>
           <HStack>
             <Input
               type="text"
-              value={query}
-              placeholder="react"
+              value={state.query}
+              placeholder="e.g. react"
               mb={5}
-              onChange={(event) => setQuery(event.target.value)}
+              onChange={(event) =>
+                dispatch({ type: "SET_QUERY", payload: event.target.value })
+              }
             />
-            <Button type="submit" colorScheme="blue" mb={5}>
+            <Button
+              type="submit"
+              isLoading={state.isLoading}
+              loadingText="Searching"
+              colorScheme="blue"
+              mb={5}
+            >
               Search
             </Button>
           </HStack>
         </FormControl>
       </form>
-      {isError && <div>Something went wrong ...</div>}
-      {isLoading ? (
+      {state.isError && <div>Something went wrong ...</div>}
+      {state.isLoading ? (
         <Spinner />
       ) : (
         <UnorderedList>
-          {data.hits.map((item) => (
+          {state.data.hits.map((item) => (
             <ListItem key={item.objectID}>
-              <Link href={item.url}>{item.title}</Link>
+              <Link href={item.url} isExternal>
+                {item.title}
+              </Link>
             </ListItem>
           ))}
         </UnorderedList>
