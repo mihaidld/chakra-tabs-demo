@@ -1,14 +1,16 @@
-import React, { Fragment, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import {
   Heading,
   FormControl,
   Input,
   HStack,
+  VStack,
   Button,
-  Center,
+  Link,
   UnorderedList,
   ListItem,
+  Spinner,
 } from "@chakra-ui/core";
 
 function FetchTab() {
@@ -40,10 +42,8 @@ function FetchTab() {
   }, [url]);
 
   return (
-    <Fragment>
-      <Center>
-        <Heading mb={10}>Fetch content with useEffect hook</Heading>
-      </Center>
+    <VStack>
+      <Heading mb={10}>Fetch content with useEffect hook</Heading>
       <form
         onSubmit={(event) => {
           setUrl(`http://hn.algolia.com/api/v1/search?query=${query}`);
@@ -67,17 +67,17 @@ function FetchTab() {
       </form>
       {isError && <div>Something went wrong ...</div>}
       {isLoading ? (
-        <div>Loading ...</div>
+        <Spinner />
       ) : (
         <UnorderedList>
           {data.hits.map((item) => (
             <ListItem key={item.objectID}>
-              <a href={item.url}>{item.title}</a>
+              <Link href={item.url}>{item.title}</Link>
             </ListItem>
           ))}
         </UnorderedList>
       )}
-    </Fragment>
+    </VStack>
   );
 }
 
