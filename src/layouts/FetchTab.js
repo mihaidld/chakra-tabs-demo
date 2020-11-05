@@ -35,15 +35,15 @@ const fetchReducer = (state, action) => {
   }
 };
 
-const initialState = {
-  data: { hits: [] },
-  query: "redux",
-  url: "https://hn.algolia.com/api/v1/search?query=redux",
-  isLoading: false,
-  isError: false,
-};
-
 function FetchTab() {
+  const initialState = {
+    data: { hits: [] },
+    query: "redux",
+    url: "https://hn.algolia.com/api/v1/search?query=redux",
+    isLoading: false,
+    isError: false,
+  };
+
   const [state, dispatch] = useReducer(fetchReducer, initialState);
   useEffect(() => {
     const fetchData = async () => {
@@ -73,6 +73,7 @@ function FetchTab() {
             type: "SET_URL",
             payload: `http://hn.algolia.com/api/v1/search?query=${state.query}`,
           });
+          event.target.reset();
         }}
       >
         <FormControl id="search-term" isRequired>

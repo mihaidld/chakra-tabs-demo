@@ -1,10 +1,10 @@
-import React from 'react'
-import { Tabs, TabList, TabPanels, Tab, TabPanel } from '@chakra-ui/core'
-import HelloTab from '../layouts/HelloTab'
-import CounterTab from '../layouts/CounterTab'
-import FormTab from '../layouts/FormTab'
-import FetchTab from '../layouts/FetchTab'
-import EthersTab from '../layouts/EthersTab'
+import React from "react";
+import { Tabs, TabList, TabPanels, Tab, TabPanel } from "@chakra-ui/core";
+import HelloTab from "../layouts/HelloTab";
+import CounterTab from "../layouts/CounterTab";
+import FormTab from "../layouts/FormTab";
+import FetchTab from "../layouts/FetchTab";
+import EthersTab from "../layouts/EthersTab";
 
 function Main() {
   return (
@@ -36,7 +36,7 @@ function Main() {
         </TabPanels>
       </Tabs>
     </>
-  )
+  );
 }
 
-export default Main
+export default Main;
